@@ -1,27 +1,49 @@
 require 'pry'
+
+class Item 
+    attr_accessor :price, :item
+
+    def initialize(item, price)
+        @item = item
+        @price = price 
+    end
+
+end
+
+
 class CashRegister
     attr_accessor :total, :all
     attr_reader :discount
 
 
     def initialize(discount = nil)
-        @total = 0
         @discount = discount
-        @all = []
+        @all = [ ]
+    end
+
+    def total
+        prices = self.all.map{|item| item.price}
+
+        @total = prices.inject(:+)
+        
+        @total
+        # binding.pry
     end
 
     def add_item(item, price, qty = 1)
-        self.total = self.total + (price * qty)
-
-        qty.times{ self.all << [item, price] }
-        self.all
-        self.total
-
+        num = qty
+        while num > 0
+            new_item = Item.new(item, price)
+            self.all << new_item
+            self.all
+            num-= 1
+        end
+        self.total 
     end
 
 
     def items
-        self.all.map{|item| item[0]}
+        self.all.map{|item| item.item}
     end
 
 
@@ -40,13 +62,10 @@ class CashRegister
     end
 
     def void_last_transaction
-        last_item = self.all.last
-        self.total -= last_item[1]
-
         self.all.pop()
-
     end
-    # binding.pry
+    binding.pry
 end
+
 
 

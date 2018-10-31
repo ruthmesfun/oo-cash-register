@@ -17,28 +17,32 @@ class CashRegister
 
 
     def initialize(discount = nil)
+        @total = 0
         @discount = discount
         @all = [ ]
     end
 
-    def total
-        prices = self.all.map{|item| item.price}
 
-        @total = prices.inject(:+)
-        
-        @total
-        # binding.pry
+    def items_total
+        prices = self.all.map{|item| item.price}
+        current_total = prices.inject(:+)
+        self.total = current_total
+
+        self.total
     end
 
     def add_item(item, price, qty = 1)
         num = qty
-        while num > 0
+
+        while num >= 1
             new_item = Item.new(item, price)
+
             self.all << new_item
+
             self.all
-            num-= 1
+            num-= 1   
         end
-        self.total 
+        self.items_total
     end
 
 
@@ -63,8 +67,16 @@ class CashRegister
 
     def void_last_transaction
         self.all.pop()
+        self.all
+       if self.all.empty?
+        self.total = 0
+        return self.total
+       end
+       
+       self.total = self.items_total
+
+       return self.total
     end
-    binding.pry
 end
 
 
